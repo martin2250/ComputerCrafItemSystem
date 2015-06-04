@@ -150,6 +150,7 @@ end
 local displayStartLine = 0
 local displayMenu = nil		--{name="", count="", stock=0}
 local termWidth, termHeight = term.getSize()
+local showMenu = true
 
 local defaultBackgroundColor = colors.black
 local menuBackgroundColor = colors.gray
@@ -250,10 +251,28 @@ function printDisplay()
 end
 
 function executeMenuRequest()
-
---FLOOR RESULT
-
-
+	local func = loadstring("return " .. displayMenu.count)
+	local ok, result = pcall(func)
+	
+	if not ok then
+		updateRequestMenu(result)
+	else
+		result = math.floor(result)
+		
+		if result > displayMenu.stock then
+			updateRequestMenu("Not enough stock")
+		elseif result <= 0 then
+			updateRequestMenu("Amount < 1")
+		else
+			if not fetchQueue[displayMenu.name] then
+				fetchQueue[displayMenu.name] = result
+			else
+				fetchQueue[displayMenu.name] = fetchQueue[displayMenu.name] + result
+			end
+			displayMenu = nil
+			printDisplay()
+		end
+	end
 end
 
 --Receiving events
@@ -262,12 +281,12 @@ function eventListen()
 	while true do
 		local eventData = {os.pullEvent()}
 
-		if eventData[1] == "mouse_scroll" then
+		if showMenu and eventData[1] == "mouse_scroll" then
 			if not displayMenu then
-				displayStartLine = displayStartLine + eventData[2]
+				displayStartLine = displayStartLine + eventData[2] * 3
 				printDisplay()
 			end
-		elseif eventData[1] == "mouse_click" then
+		elseif showMenu and eventData[1] == "mouse_click" then
 			--x:3 y:4
 			if displayMenu then
 				if eventData[4] == 10 then
@@ -287,7 +306,7 @@ function eventListen()
 					printRequestMenu()
 				end
 			end
-		elseif eventData[1] == "key" and displayMenu then
+		elseif showMenu and eventData[1] == "key" and displayMenu then
 			local scancode = eventData[2]
 			
 			if scancode == keys.backspace then
@@ -301,7 +320,7 @@ function eventListen()
 			elseif scancode == keys.enter then
 				executeMenuRequest()				
 			end
-		elseif eventData[1] == "char" and displayMenu then
+		elseif showMenu and eventData[1] == "char" and displayMenu then
 			local character = eventData[2]
 			
 			if displayMenu.count:len() < 11 then
@@ -319,7 +338,7 @@ function eventListen()
 				end
 			end
 		elseif eventData[1] == "modem_message" then
-
+			
 		end
 	end
 end
