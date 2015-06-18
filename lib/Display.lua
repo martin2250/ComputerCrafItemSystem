@@ -114,6 +114,12 @@ function executeMenuRequest()
 	if not ok then
 		updateRequestMenu(result)
 	else
+		if not result then
+			displayMenu = nil
+			printDisplay()
+			return
+		end
+	
 		result = math.floor(result)
 		
 		if result > displayMenu.stock then

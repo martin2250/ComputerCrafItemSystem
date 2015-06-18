@@ -15,7 +15,7 @@ function fetchItems()
 	end
 	
 	replaceDisplay("Fetching Items")
-	
+	turtle.select(1)
 	while #fetchQueue > 0 and getTurtleFreeSlots() > 0 do
 		local name = fetchQueue[1].name
 		local item = getItem(name)
