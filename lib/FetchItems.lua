@@ -54,7 +54,7 @@ function fetchItems()
 	end
 	
 	
-	moveTo(idleDirection, 0, idleHeight, 0)
+	moveTo(idleDirection + 2, 0, idleHeight, 0)
 	emptyInventory()
 	resumeDisplay()
 end
