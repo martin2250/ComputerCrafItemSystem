@@ -11,8 +11,9 @@ function storeItems()
 	local turtleSlot = 0
 	local storeList = {}
 
-	while turtle.suck() do
+	while turtle.suck() and turtleSlot < 16 do
 		turtleSlot = turtleSlot + 1
+		
 		local data = turtle.getItemDetail(turtleSlot)
 
 		if not getItem(getIdFromData(data))  then
