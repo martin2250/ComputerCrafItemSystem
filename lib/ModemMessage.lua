@@ -36,6 +36,8 @@ function processModemMessage(replyChannel, message)
 					end
 				end
 				
+				count = math.floor(count)
+				
 				if getItemStock(item) < count then
 					return "not enough stock of " .. item.alias
 				end
